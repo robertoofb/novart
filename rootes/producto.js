@@ -48,7 +48,7 @@ app.route("/producto").get(getProducto);
 module.exports = app;
 
 const postProducto = (request, response) => {
-    const {action ,id, nombre,descripcion,precio,talla,color,categoria,existencia,imagen} = request.body;
+    const {action ,id, nombre,descripcion,precio,talla,color,categoria,existencia,imagen, id_producto} = request.body;
     /*connection.query("INSERT INTO producto (nombre, descripcion, precio, talla, color, categoria, existencia, imagen) VALUES (?,?,?,?,?,?,?,?)",
     [nombre,descripcion,precio,talla,color,categoria,existencia,imagen],
     (error, results) => {
@@ -66,7 +66,7 @@ const postProducto = (request, response) => {
         });
     }else{
         //console.log(action);return false;
-        connection.query("UPDATE producto SET nombre = ?, descripcion = ? , precio = ?, talla = ?, color = ? , categoria = ?, existencia = ?, imagen = ? WHERE id_producto = ?", 
+        connection.query("UPDATE producto SET nombre = ?, descripcion = ? , precio = ?, talla = ?, color = ? , categoria = ?, existencia = ?, imagen = ? WHERE id_producto = "+id_producto+"", 
         [nombre,descripcion,precio,talla,color,categoria,existencia,imagen,id],
         (error, results) => {
             if(error)
@@ -88,4 +88,17 @@ const delProducto = (request, response) => {
     });
 };
 app.route("/producto/:id").delete(delProducto);
+
+const getProductoId = (request,response) => {
+    const id = request.params.id;
+    connection.query("SELECT pr.*, pr.nombre AS nombre, pr.descripcion AS descripcion, pr.precio AS precio, pr.talla AS talla, pr.color AS color, pr.categoria AS categoria, pr.existencia AS existencia, pr.imagen AS imagen FROM producto pr WHERE pr.id_producto = ?",
+    [id],
+    (error,results)=>{
+        if(error)
+            throw error;
+        response.status(200).json(results);
+    });
+};
+app.route("/productos/:id").get(getProductoId);
+
 
